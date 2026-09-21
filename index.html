@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Aplikasi Penghitung Pengeluaran Harian Bulanan">
+    <meta name="author" content="Expense Tracker">
+    <title>💰 Penghitung Pengeluaran Bulanan</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <span class="logo-icon">💰</span>
+                <h1>ExpenseTracker</h1>
+            </div>
+            <div class="header-actions">
+                <button class="btn-theme" id="btnTheme" title="Ganti Tema">
+                    <span id="themeIcon">🌙</span>
+                </button>
+                <button class="btn-export" id="btnExport" title="Export Data">
+                    📥 Export
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main">
+        <div class="container">
+
+            <!-- ===== BULAN & TAHUN PILIHAN ===== -->
+            <section class="month-selector">
+                <button class="btn-nav" id="btnPrevMonth">◀</button>
+                <h2 class="month-title" id="monthTitle">September 2026</h2>
+                <button class="btn-nav" id="btnNextMonth">▶</button>
+            </section>
+
+            <!-- ===== KARTU RINGKASAN ===== -->
+            <section class="summary-cards">
+                <div class="card card-budget">
+                    <div class="card-icon">🎯</div>
+                    <div class="card-info">
+                        <span class="card-label">Budget Bulanan</span>
+                        <span class="card-value" id="totalBudget">Rp 0</span>
+                        <button class="btn-edit-budget" id="btnEditBudget">✏️ Edit</button>
+                    </div>
+                </div>
+                <div class="card card-spent">
+                    <div class="card-icon">💸</div>
+                    <div class="card-info">
+                        <span class="card-label">Total Pengeluaran</span>
+                        <span class="card-value" id="totalSpent">Rp 0</span>
+                    </div>
+                </div>
+                <div class="card card-remaining">
+                    <div class="card-icon">💵</div>
+                    <div class="card-info">
+                        <span class="card-label">Sisa Budget</span>
+                        <span class="card-value" id="totalRemaining">Rp 0</span>
+                    </div>
+                </div>
+                <div class="card card-daily">
+                    <div class="card-icon">📊</div>
+                    <div class="card-info">
+                        <span class="card-label">Rata-rata / Hari</span>
+                        <span class="card-value" id="dailyAvg">Rp 0</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== PROGRESS BAR ===== -->
+            <section class="progress-section">
+                <div class="progress-header">
+                    <span>Progress Pengeluaran</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                <div class="progress-labels">
+                    <span id="progressSpentLabel">Rp 0 terpakai</span>
+                    <span id="progressBudgetLabel">dari Rp 0</span>
+                </div>
+            </section>
+
+            <!-- ===== FORM INPUT PENGELUARAN ===== -->
+            <section class="input-section">
+                <h3 class="section-title">📝 Catat Pengeluaran</h3>
+                <form class="expense-form" id="expenseForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="expenseDate">📅 Tanggal</label>
+                            <input type="date" id="expenseDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="expenseAmount">💰 Jumlah (Rp)</label>
+                            <input type="number" id="expenseAmount" placeholder="50000" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="expenseCategory">📂 Kategori</label>
+                            <select id="expenseCategory" required>
+                                <option value="">-- Pilih Kategori --</option>
+                                <option value="makanan">🍔 Makanan & Minuman</option>
+                                <option value="transportasi">🚗 Transportasi</option>
+                                <option value="belanja">🛒 Belanja</option>
+                                <option value="tagihan">📄 Tagihan & Utilitas</option>
+                                <option value="hiburan">🎮 Hiburan</option>
+                                <option value="kesehatan">💊 Kesehatan</option>
+                                <option value="pendidikan">📚 Pendidikan</option>
+                                <option value="tabungan">🏦 Tabungan</option>
+                                <option value="lainnya">📦 Lainnya</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="expenseNote">📝 Keterangan</label>
+                            <input type="text" id="expenseNote" placeholder="Makan siang, bensin, dll">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-submit">
+                        ➕ Tambah Pengeluaran
+                    </button>
+                </form>
+            </section>
+
+            <!-- ===== KATEGORI PER KATEGORI ===== -->
+            <section class="category-section">
+                <h3 class="section-title">📊 Pengeluaran Per Kategori</h3>
+                <div class="category-grid" id="categoryGrid">
+                    <!-- Diisi oleh JS -->
+                </div>
+            </section>
+
+            <!-- ===== CHART ===== -->
+            <section class="chart-section">
+                <h3 class="section-title">📈 Grafik Pengeluaran Harian</h3>
+                <div class="chart-container">
+                    <canvas id="dailyChart"></canvas>
+                </div>
+                <div class="chart-container chart-pie-container">
+                    <h4 class="chart-subtitle">Distribusi Kategori</h4>
+                    <canvas id="pieChart"></canvas>
+                </div>
+            </section>
+
+            <!-- ===== DAFTAR PENGELUARAN ===== -->
+            <section class="list-section">
+                <div class="list-header">
+                    <h3 class="section-title">📋 Riwayat Pengeluaran</h3>
+                    <div class="list-controls">
+                        <input type="text" id="searchExpense" placeholder="🔍 Cari...">
+                        <select id="filterCategory">
+                            <option value="all">Semua Kategori</option>
+                            <option value="makanan">🍔 Makanan</option>
+                            <option value="transportasi">🚗 Transportasi</option>
+                            <option value="belanja">🛒 Belanja</option>
+                            <option value="tagihan">📄 Tagihan</option>
+                            <option value="hiburan">🎮 Hiburan</option>
+                            <option value="kesehatan">💊 Kesehatan</option>
+                            <option value="pendidikan">📚 Pendidikan</option>
+                            <option value="tabungan">🏦 Tabungan</option>
+                            <option value="lainnya">📦 Lainnya</option>
+                        </select>
+                        <select id="sortBy">
+                            <option value="date-desc">Terbaru</option>
+                            <option value="date-asc">Terlama</option>
+                            <option value="amount-desc">Termahal</option>
+                            <option value="amount-asc">Termurah</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="expense-list" id="expenseList">
+                    <!-- Diisi oleh JS -->
+                </div>
+                <div class="list-empty" id="listEmpty" style="display:none;">
+                    <span class="empty-icon">📭</span>
+                    <p>Belum ada pengeluaran tercatat</p>
+                </div>
+            </section>
+
+            <!-- ===== KALENDAR ===== -->
+            <section class="calendar-section">
+                <h3 class="section-title">📅 Kalender Pengeluaran</h3>
+                <div class="calendar" id="calendar">
+                    <!-- Diisi oleh JS -->
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- ===== MODAL EDIT BUDGET ===== -->
+    <div class="modal-overlay" id="budgetModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>🎯 Atur Budget Bulanan</h3>
+                <button class="btn-close" id="btnCloseBudget">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="budgetInput">Budget Bulanan (Rp)</label>
+                    <input type="number" id="budgetInput" placeholder="5000000" min="0">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" id="btnCancelBudget">Batal</button>
+                <button class="btn-save" id="btnSaveBudget">💾 Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL KONFIRMASI HAPUS ===== -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h3>⚠️ Hapus Pengeluaran</h3>
+                <button class="btn-close" id="btnCloseDelete">✕</button>
+            </div>
+            <div class="modal-body">
+                <p>Apakah Anda yakin ingin menghapus pengeluaran ini?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" id="btnCancelDelete">Batal</button>
+                <button class="btn-danger" id="btnConfirmDelete">🗑️ Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== TOAST NOTIFICATION ===== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <p>💰 ExpenseTracker &copy; 2026 — Kelola keuanganmu dengan bijak</p>
+    </footer>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script src="js/utils.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/chart.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
